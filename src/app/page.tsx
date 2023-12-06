@@ -12,7 +12,7 @@ const myFont = localFont({ src: '../../public/fonts/ZTRavigsfen-Regular.otf' })
 export default function Home() {
   const [selected, setSelected] = useState(false);
 
-  const handleChildSelect = (value) => {
+  const handleChildSelect = (value: boolean) => {
     setSelected(value);
   };
 
