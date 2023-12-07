@@ -19,8 +19,11 @@ const scrollToBottom = () => {
     }
   }, 600);
 };
+interface QuizProps {
+  onSelect: () => void;
+}
 
-const Quiz = ({onSelect}) => {
+const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
   const [selected, setSelected] = useState(false);
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState(0)
   const [currentAnswer, setCurrentAnswer] = useState(0); 
