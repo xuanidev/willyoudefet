@@ -20,7 +20,7 @@ const scrollToBottom = () => {
   }, 600);
 };
 interface QuizProps {
-  onSelect: () => void;
+  onSelect: (value: boolean) => void;
 }
 
 const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
