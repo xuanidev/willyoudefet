@@ -29,10 +29,22 @@ interface QuizQuestion {
   choices__es: string;
   choices__en: string;
   img: string;
+  votes: number[]; // Assuming votes is an array of numbers
+}
+interface QuizQuestionString {
+  id: number;
+  question__es: string;
+  question__en: string;
+  choices__es: string;
+  choices__en: string;
+  img: string;
   votes: string; // Assuming votes is an array of numbers
 }
 interface QuizQuestionArray {
   todos: QuizQuestion[];
+}
+interface QuizQuestionStringArray {
+  todos: QuizQuestionString[];
 }
 
 
@@ -60,9 +72,9 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
         "Content-Type": "application/json",
       },
     }).then((res) => {
-      res.json().then((data: QuizQuestion[]) => {
+      res.json().then((data: QuizQuestionString[]) => {
         // Deserialize the 'votes' array in each object
-        const deserializedData = data.map((item) => {
+        const deserializedData = data.map((item: QuizQuestionString) => {
           return {
             ...item,
             votes: JSON.parse(item.votes),
@@ -107,10 +119,10 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
     if (remainingQuestions.length === 0) {  
       try {
         const data = await postData(voted);
-        const { todos } = data as QuizQuestionArray;
+        const { todos } = data as QuizQuestionStringArray;
         allVisited = data.allVisited;
         console.log(data.todos);
-        const deserializedData = todos.map((item:QuizQuestion) => {
+        const deserializedData = todos.map((item:QuizQuestionString) => {
           console.log(item);
           return {
             ...item,
@@ -145,12 +157,13 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
     if(result != questions){
       setQuestion(result[randomNumber].question__es);
       setSrc(result[randomNumber].img); 
-      setVotes(JSON.parse(result[randomNumber].votes));
+      setVotes(result[randomNumber].votes);
       console.log(result);
     }else{
       setQuestion(questions[randomNumber].question__es);
       setSrc(questions[randomNumber].img); 
-      setVotes(JSON.parse(questions[randomNumber].votes));
+      console.log(questions[randomNumber].votes);
+      setVotes(questions[randomNumber].votes);
     }
     setSelected(false);
     onSelect(false);
