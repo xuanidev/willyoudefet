@@ -145,19 +145,19 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
     if(result != questions){
       setQuestion(result[randomNumber].question__es);
       setSrc(result[randomNumber].img); 
-      setVotes(result[randomNumber].votes);
+      setVotes(JSON.parse(result[randomNumber].votes));
       console.log(result);
     }else{
       setQuestion(questions[randomNumber].question__es);
       setSrc(questions[randomNumber].img); 
-      setVotes(questions[randomNumber].votes);
+      setVotes(JSON.parse(questions[randomNumber].votes));
     }
     setSelected(false);
     onSelect(false);
     setCurrentAnswer(randomNumber);
   };
 
-  const onAnswerSelected = (index) => {
+  const onAnswerSelected = (index: number) => {
     if(!selected){
       setSelected(!selected);
       onSelect(!selected);
@@ -168,7 +168,7 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
         localStorage.setItem('voted', JSON.stringify(newVoted));
       }
       let totalVotes = 0;
-      questions[currentAnswer].votes.forEach((vote)=>{
+      questions[currentAnswer].votes.forEach((vote:number)=>{
         totalVotes += vote
       })
       setCurrentVotes(totalVotes);
@@ -176,7 +176,7 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
         let totalVotes = [0, 0, 0, 0, 0];
         setResults(totalVotes);
       }else{
-        setResults(questions[currentAnswer].votes.map((result) => (Math.round((result / totalVotes) * 10000)/100)));
+        setResults(questions[currentAnswer].votes.map((result:number) => (Math.round((result / totalVotes) * 10000)/100)));
       }
       /*fetch('http://localhost:3000/api', {
           method: 'POST',
