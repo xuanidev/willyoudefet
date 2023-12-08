@@ -21,7 +21,6 @@ export async function GET(req, res) {
 
   // Query to get all todos from the "todo" table
   const todos = await db.all("SELECT * FROM questions LIMIT 14");
-  console.log(todos);
   // Return the todos as a JSON response with a 200 status code
   return new Response(JSON.stringify(todos), {
     headers: { "content-type": "application/json" },

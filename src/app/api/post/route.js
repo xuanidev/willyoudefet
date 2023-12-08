@@ -24,7 +24,6 @@ export async function POST(req) {
   if (data.votes && typeof data.votes === "object" && data.votes.length > 0){
     // Extract values from the JSON object and convert them into an array
     data.votes = Object.values(data.votes);
-    console.log("Converted votes to array:", data.votes[0]);
 
     let sqlGetNotInIds = `SELECT *
                      FROM questions

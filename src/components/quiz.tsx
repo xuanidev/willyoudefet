@@ -59,13 +59,12 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
   const [question, setQuestion] = useState("Would you win against a lion in a fight?");
   const [src, setSrc] = useState('/questions/lion.jpg');
   const [votes, setVotes] = useState<number[]>([])
-  const [voted, setVoted] = useState<number[]>(() => {
-    const storedData = localStorage.getItem('voted');
-    return storedData ? JSON.parse(storedData) : [];
-  });
+  const [voted, setVoted] = useState<number[]>([]);
 
 
   useEffect(() => {
+    let storedData = localStorage.getItem('voted');
+    setVoted(storedData ? JSON.parse(storedData) : []);
     fetch("http://localhost:3000/api", {
       method: "GET",
       headers: {
@@ -85,7 +84,6 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
         setVotes(deserializedData[currentAnswer].votes);
         
       let totalVotes = 0;
-      console.log(deserializedData);
       deserializedData[selectedAnswerIndex].votes.forEach((vote: number)=>{
         totalVotes += vote
       })
@@ -121,7 +119,6 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
         const data = await postData(voted);
         const { todos } = data as QuizQuestionStringArray;
         allVisited = data.allVisited;
-        console.log(data.todos);
         const deserializedData = todos.map((item:QuizQuestionString) => {
           console.log(item);
           return {
@@ -129,7 +126,6 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
             votes: JSON.parse(item.votes),
           };
         });
-        console.log(deserializedData);
         setQuestions(deserializedData);
         if(allVisited){
           localStorage.setItem('voted', '');
@@ -158,11 +154,9 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
       setQuestion(result[randomNumber].question__es);
       setSrc(result[randomNumber].img); 
       setVotes(result[randomNumber].votes);
-      console.log(result);
     }else{
       setQuestion(questions[randomNumber].question__es);
       setSrc(questions[randomNumber].img); 
-      console.log(questions[randomNumber].votes);
       setVotes(questions[randomNumber].votes);
     }
     setSelected(false);
