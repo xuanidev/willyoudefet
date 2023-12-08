@@ -31,6 +31,10 @@ interface QuizQuestion {
   img: string;
   votes: string; // Assuming votes is an array of numbers
 }
+interface QuizQuestionArray {
+  todos: QuizQuestion[];
+}
+
 
 
 const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
@@ -99,13 +103,15 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
     const availableQuestions = questions.map(question => question.id);
     const remainingQuestions = availableQuestions.filter(questionId => !voted.includes(questionId));
     let allVisited = false;
-    let questionsGet = [];
+    let questionsGet: QuizQuestion[] = [];
     if (remainingQuestions.length === 0) {  
       try {
         const data = await postData(voted);
+        const { todos } = data as QuizQuestionArray;
         allVisited = data.allVisited;
-        console.log(allVisited);
-        const deserializedData = data.todos.map((item:QuizQuestion[]) => {
+        console.log(data.todos);
+        const deserializedData = todos.map((item:QuizQuestion) => {
+          console.log(item);
           return {
             ...item,
             votes: JSON.parse(item.votes),
