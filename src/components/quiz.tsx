@@ -22,18 +22,28 @@ const scrollToBottom = () => {
 interface QuizProps {
   onSelect: (value: boolean) => void;
 }
+interface QuizQuestion {
+  id: number;
+  question__es: string;
+  question__en: string;
+  choices__es: string;
+  choices__en: string;
+  img: string;
+  votes: string; // Assuming votes is an array of numbers
+}
+
 
 const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
   const [selected, setSelected] = useState(false);
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState(0)
   const [currentAnswer, setCurrentAnswer] = useState(0); 
   const [currentVotes, setCurrentVotes] = useState(0);
-  const [results, setResults] = useState([])
-  const [questions, setQuestions] = useState([]);
+  const [results, setResults] = useState<number[]>([])
+  const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [question, setQuestion] = useState("Would you win against a lion in a fight?");
   const [src, setSrc] = useState('/questions/lion.jpg');
-  const [votes, setVotes] = useState([])
-  const [voted, setVoted] = useState(() => {
+  const [votes, setVotes] = useState<number[]>([])
+  const [voted, setVoted] = useState<number[]>(() => {
     const storedData = localStorage.getItem('voted');
     return storedData ? JSON.parse(storedData) : [];
   });
@@ -46,7 +56,7 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
         "Content-Type": "application/json",
       },
     }).then((res) => {
-      res.json().then((data) => {
+      res.json().then((data: QuizQuestion[]) => {
         // Deserialize the 'votes' array in each object
         const deserializedData = data.map((item) => {
           return {
@@ -60,17 +70,17 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
         
       let totalVotes = 0;
       console.log(deserializedData);
-      deserializedData[selectedAnswerIndex].votes.forEach((vote)=>{
+      deserializedData[selectedAnswerIndex].votes.forEach((vote: number)=>{
         totalVotes += vote
       })
       setCurrentVotes(totalVotes);
-        setResults(deserializedData[selectedAnswerIndex].votes.map((result) => (Math.round((result / totalVotes) * 10000)/100)));
+        setResults(deserializedData[selectedAnswerIndex].votes.map((result: number) => (Math.round((result / totalVotes) * 10000)/100)));
       });
     });
     localStorage.setItem('voted', JSON.stringify(voted));
   }, []);
 
-  const postData = async (voted) => {
+  const postData = async (voted: number[]) => {
     const response = await fetch("http://localhost:3000/api/post", {
       method: "POST",
       headers: {
@@ -82,11 +92,10 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
     if (!response.ok) {
       throw new Error("Failed to fetch data");
     }
-  
     return response.json();
   };
   
-  const generateRandomQuestionId = async (voted) => {
+  const generateRandomQuestionId = async (voted: number[]) => {
     const availableQuestions = questions.map(question => question.id);
     const remainingQuestions = availableQuestions.filter(questionId => !voted.includes(questionId));
     let allVisited = false;
@@ -96,7 +105,7 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
         const data = await postData(voted);
         allVisited = data.allVisited;
         console.log(allVisited);
-        const deserializedData = data.todos.map((item) => {
+        const deserializedData = data.todos.map((item:QuizQuestion[]) => {
           return {
             ...item,
             votes: JSON.parse(item.votes),
