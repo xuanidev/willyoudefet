@@ -65,7 +65,7 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
   useEffect(() => {
     let storedData = localStorage.getItem('voted');
     setVoted(storedData ? JSON.parse(storedData) : []);
-    fetch("http://localhost:3000/api", {
+    fetch("https://testwill11.vercel.app/api", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -95,7 +95,7 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
   }, []);
 
   const postData = async (voted: number[]) => {
-    const response = await fetch("http://localhost:3000/api/post", {
+    const response = await fetch("https://testwill11.vercel.app/api/post", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
