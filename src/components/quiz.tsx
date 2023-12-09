@@ -8,7 +8,7 @@ import man from '../../public/manvs-yllw.png'
 import replay from '../../public/icons/replay-icon.svg'
 import localFont from 'next/font/local'
 
-const myFont = localFont({ src: '../../public/fonts/ZTRavigsfen-Regular.otf' })
+const myFont = localFont({ src: '../../public/fonts/ZTRavigsfen-Regular.woff' })
 const { bgColors,choices } = quiz;
 
 const scrollToBottom = () => {
@@ -29,7 +29,7 @@ interface QuizQuestion {
   choices__es: string;
   choices__en: string;
   img: string;
-  votes: number[]; // Assuming votes is an array of numbers
+  votes: number[]; 
 }
 interface QuizQuestionString {
   id: number;
@@ -38,11 +38,9 @@ interface QuizQuestionString {
   choices__es: string;
   choices__en: string;
   img: string;
-  votes: string; // Assuming votes is an array of numbers
+  votes: string;
 }
-interface QuizQuestionArray {
-  todos: QuizQuestion[];
-}
+
 interface QuizQuestionStringArray {
   todos: QuizQuestionString[];
 }
@@ -56,46 +54,14 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
   const [currentVotes, setCurrentVotes] = useState(0);
   const [results, setResults] = useState<number[]>([])
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
-  const [question, setQuestion] = useState("Would you win against a lion in a fight?");
+  const [question, setQuestion] = useState("Le ganarias a un leon en un combate");
   const [src, setSrc] = useState('/questions/lion.jpg');
   const [votes, setVotes] = useState<number[]>([])
   const [voted, setVoted] = useState<number[]>([]);
 
-
-  useEffect(() => {
-    let storedData = localStorage.getItem('voted');
-    setVoted(storedData ? JSON.parse(storedData) : []);
-    fetch("https://testwill11.vercel.app/api", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then((res) => {
-      res.json().then((data: QuizQuestionString[]) => {
-        // Deserialize the 'votes' array in each object
-        const deserializedData = data.map((item: QuizQuestionString) => {
-          return {
-            ...item,
-            votes: JSON.parse(item.votes),
-          };
-        });
-        setQuestions(deserializedData);
-        setQuestion(deserializedData[0].question__es);
-        setVotes(deserializedData[currentAnswer].votes);
-        
-      let totalVotes = 0;
-      deserializedData[selectedAnswerIndex].votes.forEach((vote: number)=>{
-        totalVotes += vote
-      })
-      setCurrentVotes(totalVotes);
-        setResults(deserializedData[selectedAnswerIndex].votes.map((result: number) => (Math.round((result / totalVotes) * 10000)/100)));
-      });
-    });
-    localStorage.setItem('voted', JSON.stringify(voted));
-  }, []);
-
+  
   const postData = async (voted: number[]) => {
-    const response = await fetch("https://testwill11.vercel.app/api/post", {
+    const response = await fetch("https://testwill10.vercel.app/api/post", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -108,7 +74,6 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
     }
     return response.json();
   };
-  
   const generateRandomQuestionId = async (voted: number[]) => {
     const availableQuestions = questions.map(question => question.id);
     const remainingQuestions = availableQuestions.filter(questionId => !voted.includes(questionId));
@@ -120,7 +85,6 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
         const { todos } = data as QuizQuestionStringArray;
         allVisited = data.allVisited;
         const deserializedData = todos.map((item:QuizQuestionString) => {
-          console.log(item);
           return {
             ...item,
             votes: JSON.parse(item.votes),
@@ -147,6 +111,29 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
     }
     return {randomNumber: 0,result: questionsGet};
   };
+
+  useEffect(() => {
+    let storedData = localStorage.getItem('voted');
+    setVoted(storedData ? JSON.parse(storedData) : []);
+    const fetchData = async () =>{
+      let {randomNumber,result} = await generateRandomQuestionId(voted);
+      if(result != questions){
+        setQuestion(result[randomNumber].question__es);
+        setSrc(result[randomNumber].img); 
+        setVotes(result[randomNumber].votes);
+      }else{
+        setQuestion(questions[randomNumber].question__es);
+        setSrc(questions[randomNumber].img); 
+        setVotes(questions[randomNumber].votes);
+      }
+      setSelected(false);
+      onSelect(false);
+      setCurrentAnswer(randomNumber);
+    }
+    fetchData().catch(console.error);
+    localStorage.setItem('voted', JSON.stringify(voted));
+  }, []);
+
   
   const nextQuestion = async () => {
     let {randomNumber,result} = await generateRandomQuestionId(voted);
@@ -169,6 +156,8 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
       setSelected(!selected);
       onSelect(!selected);
       setSelectedAnswerIndex(index);
+      console.log(currentAnswer);
+      console.log(questions[currentAnswer])
       if(!voted.includes(questions[currentAnswer].id)){
         const newVoted = [...voted, questions[currentAnswer].id];
         setVoted(newVoted);
@@ -185,20 +174,19 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
       }else{
         setResults(questions[currentAnswer].votes.map((result:number) => (Math.round((result / totalVotes) * 10000)/100)));
       }
-      /*fetch('http://localhost:3000/api', {
+      fetch('https://testwill10.vercel.app/api', {
           method: 'POST',
           headers: {
               'Content-type': 'application/json',
           },
           body: JSON.stringify({ id: questions[currentAnswer].id,voted: index  }),
       })
-          .then((response) => response.json())
           .then((data) => {
-              console.log(data);
+              //console.log(data);
           })
           .catch((error) => {
               console.error(error);
-      });*/
+      });
       scrollToBottom();
     }
   }
@@ -259,7 +247,7 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
                     key={index}
                     className='result-option relative'
                       >          
-                      <div style={{height: `${answer}px`,backgroundColor: bgColors[index]}} className='bg-result'>
+                      <div style={{height: `${answer}px`,backgroundColor: bgColors[index], border: `${isNaN(answer) || answer == 0 ? 'none' : ''}` }} className='bg-result'>
                         <div className='bg-bar' style={{ opacity: '70%', filter: 'brightness(100%)',height: !selected ? '0px' : '24px'}}></div>
                       </div>
                   </li>

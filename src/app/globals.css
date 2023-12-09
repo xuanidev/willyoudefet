@@ -184,6 +184,8 @@ font-family: 'Poppins', sans-serif;
   color: #f8e483;
   transition: all 0.2s ease-in-out;
   text-transform: uppercase;
+  padding-block: 0px;
+  padding-inline: 0px;
 }
 .bg-granite-reverse{
   transform: scaleX(-1);
@@ -215,7 +217,7 @@ font-family: 'Poppins', sans-serif;
   color: #f8e483;
   transition: all 0.2s ease-in-out;
   text-transform: uppercase;
-  border: 2px solid #f4b66f;
+  border: 1px solid #f4b66f;
   border-radius: 4px;
   
 }
@@ -265,13 +267,16 @@ font-family: 'Poppins', sans-serif;
   .question{
     font-size: 1.4rem;
   }
+  .btnQuiz{
+    font-size: 20px;
+  }
   .question-mark{
     font-size: 30px;
     margin-right: 6px;
     margin-left: 6px;
   }
   .resultQuiz__tittle{
-    font-size: 13px;
+    font-size: 12px;
   }
   .resultQuiz__votes{
     font-size: 13px;

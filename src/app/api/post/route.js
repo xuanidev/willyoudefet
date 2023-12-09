@@ -9,7 +9,6 @@ let db = null;
 
 export async function POST(req) {
   const data = await req.json();
-  console.log(data);
 
   if (!db) {
     const dbPath = path.resolve(process.cwd(), "questions.db");
@@ -20,7 +19,6 @@ export async function POST(req) {
     });
   }
   // Assuming 'data.votes' is a JSON object
-  console.log(data.votes);
   if (data.votes && typeof data.votes === "object" && data.votes.length > 0){
     // Extract values from the JSON object and convert them into an array
     data.votes = Object.values(data.votes);
@@ -35,6 +33,7 @@ export async function POST(req) {
         console.error(err.message);
         return;
       }
+
     });
     if(todos.length !== 0){
       const responseObj = {

@@ -7,7 +7,7 @@ const questions = [
     choices__es:['Sin duda', 'Sí', 'No estoy seguro', 'No', 'En mi vida'],
     choices__en: ['Eyes closed', 'Yes', 'Not Sure', 'No', 'In my life'],
     src: '/questions/lion.jpg',
-    votes: [0,0,0,0,0],
+    votes: [0,0,0,1,0],
   },
   {
     question__es: 'Te comerías un kilo de comida',
