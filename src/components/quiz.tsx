@@ -61,7 +61,7 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
 
   
   const postData = async (voted: number[]) => {
-    const response = await fetch("https://testwill12.vercel.app/api/post", {
+    const response = await fetch("https://testwill13.vercel.app/api/post", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -174,7 +174,7 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
       }else{
         setResults(questions[currentAnswer].votes.map((result:number) => (Math.round((result / totalVotes) * 10000)/100)));
       }
-      fetch('https://testwill12.vercel.app/api', {
+      fetch('https://testwill13.vercel.app/api', {
           method: 'POST',
           headers: {
               'Content-type': 'application/json',

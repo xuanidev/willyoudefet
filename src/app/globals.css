@@ -61,8 +61,8 @@ button {
 .vs{
   height: 15%;
   padding-top: 12px;
-  display: grid;
-  place-content: center;
+  display: flex;
+  align-items: center;
   font-size: 60px;
   font-weight: bold;
   transition: all 0.6s ease-in-out;
