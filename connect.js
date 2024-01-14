@@ -1,5 +1,3 @@
-const sqlite3 = require("sqlite3").verbose();
-
 const questions = [
   {
     question__es: 'Le ganarias a un leon en un combate',
@@ -115,65 +113,3 @@ const questions = [
   },
   // Add 10 more examples as needed
 ];
-
-const db = new sqlite3.Database(
-  "./questions.db",
-  sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE,
-  (err) => {
-    if (err) {
-      return console.error(err.message);
-    }
-    console.log("Connected to the SQLite database.");
-
-    db.serialize(() => {
-      // Create the questions table if it doesn't exist
-      db.run(
-        `CREATE TABLE IF NOT EXISTS questions (
-          id INTEGER PRIMARY KEY,
-          question__es TEXT,
-          question__en TEXT,
-          choices__es TEXT,
-          choices__en TEXT,
-          img TEXT,
-          votes TEXT
-        )`,
-        (err) => {
-          if (err) {
-            return console.error(err.message);
-          }
-          console.log("Created questions table.");
-
-          // Clear existing data in the questions table
-          db.run(`DELETE FROM questions`, (err) => {
-            if (err) {
-              return console.error(err.message);
-            }
-            console.log("All rows deleted from questions.");
-
-            // Insert new data into the questions table
-            const insertSql = `INSERT INTO questions(question__es,question__en,choices__es,choices__en, img, votes) VALUES(?, ?, ?, ?, ?, ?)`;
-
-            questions.forEach((q) => {
-              const values = [q.question__es, q.question__en, q.question__es, q.question__en, q.src, JSON.stringify(q.votes)];
-              db.run(insertSql, values, function (err) {
-                if (err) {
-                  return console.error(err.message);
-                }
-                const id = this.lastID;
-                console.log(`Row inserted, ID ${id}`);
-              });
-            });
-
-            // Close the database connection after all insertions are done
-            db.close((err) => {
-              if (err) {
-                return console.error(err.message);
-              }
-              console.log("Closed the database connection.");
-            });
-          });
-        }
-      );
-    });
-  }
-);
