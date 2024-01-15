@@ -1,8 +1,8 @@
 'use client' 
 import { useState,useEffect } from 'react'
-import supabase from '../../utils/supabase';
+import {getQuestions, getVotes, postVote} from '../app/api/api'
 import { quiz } from '../app/questions'
-import { QuizProps, QuizQuestion, QuizVotes, QuizQuestionString, QuizQuestionStringArray } from '../app/interfaces';
+import { QuizProps, QuizQuestion, QuizVotes, QuizQuestionString, QuizQuestionStringArray, serializeQuestions, serializeVotes } from '../app/interfaces';
 import './quiz.css'
 import Image from 'next/image'
 import granite from '../../public/wall-4-light.png'
@@ -22,113 +22,25 @@ const scrollToBottom = () => {
   }, 600);
 };
 
-const getQuestions = async (voted: number[]) => {
-  try {
-    const votedString = `(${voted.join(',')})`;
-    const { data: questionsResult } = await supabase.from('questions').select().not('id', 'in', votedString);
-    console.log(questionsResult);
-    if (questionsResult) {
-      return questionsResult;
-    }
-  } catch (error) {
-    console.error("Error fetching questions:", error);
-  }
-  return undefined;
-};
-
-const getVotes = async ( id:number ) => {
-  console.log("get Votes id: " + id);
-  try {
-    const { data: votesResult } = await supabase.from('votes').select().eq('id', id );
-    if (votesResult) {
-      return votesResult;
-    }
-  } catch (error) {
-    console.error("Error fetching questions:", error);
-  }
-  return undefined;
-};
-const postVote = async ( id:number, index: number, votes:number[], currentVotes: number ) => {
-  try {
-    const fieldName = `${index + 1}`;
-    const updateObject = { [fieldName]: votes[index] + 1, totalVotes: currentVotes +1};
-    console.log(updateObject);
-    console.log(id);
-    console.log(currentVotes);
-
-    const { data: votesResult } = await supabase
-    .from('votes')
-    .update(updateObject)
-    .eq('id', id);
-
-    if (votesResult) {
-      console.log(votesResult);
-    }
-  } catch (error) {
-    console.error("Error fetching questions:", error);
-  }
-};
-
-const serializeQuestions = (questionsResult: any): QuizQuestion[] => {
-  if (questionsResult) {
-    const formattedQuestions: QuizQuestion[] = questionsResult.map((question: any) => {
-      return {
-        id: question.id,
-        question__es: question.question__es,
-        question__en: question.question__en,
-        choices__es: question.choices__es,
-        choices__en: question.choices__en,
-        img: question.img
-      };
-    });
-
-    return formattedQuestions;
-  }
-
-  return [];
-};
-
-const serializeVotes = (votesResult: any): QuizVotes[] => {
-  if (votesResult) {
-    const formattedVotes: QuizVotes[] = votesResult.map((votes: any) => {
-      return {
-        id: votes.id,
-        1: votes['1'],
-        2: votes['2'],
-        3: votes['3'],
-        4: votes['4'],
-        5: votes['5'],
-        totalVotes: votes.totalVotes,
-      };
-    });
-
-    return formattedVotes;
-  }
-
-  return [];
-};
-
 const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
   const [selected, setSelected] = useState(false);
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState(0)
   const [currentAnswer, setCurrentAnswer] = useState(1); 
   const [currentVotes, setCurrentVotes] = useState(0);
-  const [results, setResults] = useState<number[]>([])
   const [questions, setQuestions] = useState<QuizQuestion[]>([]);
   const [question, setQuestion] = useState("Le ganarias a un leon en un combate");
   const [src, setSrc] = useState('/questions/lion.jpg');
   const [votes, setVotes] = useState<number[]>([]);
   const [percentage, setPercentage] = useState<number[]>([])
   const [voted, setVoted] = useState<number[]>([]);
+  const [range, setRange] = useState(0);
 
   const createVotes = (votesResult: QuizVotes[]) =>{
     const totalVotes: QuizVotes[] = serializeVotes(votesResult);
-    console.log(totalVotes);
     setCurrentVotes(totalVotes[0].totalVotes);
     const delayedVotesUpdate = () => {
       let votes = [totalVotes[0][1], totalVotes[0][2], totalVotes[0][3], totalVotes[0][4], totalVotes[0][5]];
       setVotes(votes);
-      console.log(totalVotes[0].totalVotes);
     };
     setTimeout(delayedVotesUpdate, 600);
   }
@@ -140,7 +52,8 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
     let votesGet: QuizVotes[] = [];
     if (remainingQuestions.length === 0) {  
       try {
-        const questionsResult = await getQuestions(voted);
+        const questionsResult = await getQuestions(voted, range);
+        setRange( range + 9);
         questionsGet = serializeQuestions(questionsResult);
         const votesResult = await getVotes(currentAnswer);
         if (questionsResult && votesResult) {
@@ -151,11 +64,8 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
       }
     } else {
       const randomIndex = Math.floor(Math.random() * remainingQuestions.length);
-      console.log("randomindex " + randomIndex);
-      console.log(remainingQuestions);
       const randomQuestionId = remainingQuestions[randomIndex];
       const indexOfSelectedQuestion = questions.findIndex(question => question.id === randomQuestionId);
-      console.log("index " + randomQuestionId);
       const votesResult = await getVotes(randomQuestionId);
       votesGet = serializeVotes(votesResult);
       createVotes(votesGet);
@@ -167,9 +77,10 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
 
   useEffect(() => {
     let storedData = localStorage.getItem('voted');
+    let storedDataAux = storedData ? JSON.parse(storedData) : [];
     setVoted(storedData ? JSON.parse(storedData) : []);
     const fetchData = async () =>{
-      let {randomNumber,result} = await generateRandomQuestionId(voted);
+      let {randomNumber,result} = await generateRandomQuestionId(storedDataAux);
       setQuestions(result);
       if(result != questions){
         setQuestion(result[randomNumber].question__es);
@@ -180,11 +91,10 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
       }
       setSelected(false);
       onSelect(false);
-      console.log(randomNumber);
       setCurrentAnswer(randomNumber);
     }
     fetchData().catch(console.error);
-    localStorage.setItem('voted', JSON.stringify(voted));
+    //localStorage.setItem('voted', JSON.stringify(voted));
   }, []);
 
   
@@ -192,7 +102,6 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
     setPercentage([0,0,0,0,0]);
     setVotes([0,0,0,0,0]);
     let {randomNumber,result} = await generateRandomQuestionId(voted);
-    console.log(result);
     if(result != questions){
       setQuestion(result[randomNumber].question__es);
       setSrc(result[randomNumber].img); 
@@ -202,7 +111,6 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
     }
     setSelected(false);
     onSelect(false);
-    console.log(randomNumber);
     setCurrentAnswer(randomNumber);
   };
 
@@ -217,9 +125,7 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
         localStorage.setItem('voted', JSON.stringify(newVoted));
       }
       await postVote(questions[currentAnswer].id,index, votes, currentVotes);
-      //Set Percentage DATA
       if(currentVotes === 0){
-        console.log(currentVotes);
         let totalVotes = [0, 0, 0, 0, 0];
         totalVotes[index] = 1;
         setVotes(totalVotes);
@@ -229,7 +135,6 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
         setPercentage(votesAux);
         setVotes(votesAux.map((result:number) => (Math.round((result / currentVotes) * 10000)/100)));
       }
-      //POST METHOD OF VOTES
       scrollToBottom();
     }
   }

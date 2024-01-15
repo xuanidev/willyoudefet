@@ -34,3 +34,42 @@ export type QuizProps = {
   export type QuizQuestionStringArray = {
     todos: QuizQuestionString[];
   };
+
+  export const serializeQuestions = (questionsResult: any): QuizQuestion[] => {
+    if (questionsResult) {
+      const formattedQuestions: QuizQuestion[] = questionsResult.map((question: any) => {
+        return {
+          id: question.id,
+          question__es: question.question__es,
+          question__en: question.question__en,
+          choices__es: question.choices__es,
+          choices__en: question.choices__en,
+          img: question.img
+        };
+      });
+  
+      return formattedQuestions;
+    }
+  
+    return [];
+  };
+  
+  export const serializeVotes = (votesResult: any): QuizVotes[] => {
+    if (votesResult) {
+      const formattedVotes: QuizVotes[] = votesResult.map((votes: any) => {
+        return {
+          id: votes.id,
+          1: votes['1'],
+          2: votes['2'],
+          3: votes['3'],
+          4: votes['4'],
+          5: votes['5'],
+          totalVotes: votes.totalVotes,
+        };
+      });
+  
+      return formattedVotes;
+    }
+  
+    return [];
+  };
