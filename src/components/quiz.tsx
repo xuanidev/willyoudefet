@@ -1,6 +1,6 @@
 'use client' 
 import { useState,useEffect } from 'react'
-import {getQuestions, getVotes, postVote} from '../app/api/api'
+import {defaultQuestion, getQuestions, getVotes, postVote} from '../app/api/api'
 import { quiz } from '../app/questions'
 import { QuizProps, QuizQuestion, QuizVotes, QuizQuestionString, QuizQuestionStringArray, serializeQuestions, serializeVotes } from '../app/interfaces';
 import './quiz.css'
@@ -34,6 +34,7 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
   const [percentage, setPercentage] = useState<number[]>([])
   const [voted, setVoted] = useState<number[]>([]);
   const [range, setRange] = useState(0);
+  //const [isAllVisited, setIsAllVisited] = useState(false);
 
   const createVotes = (votesResult: QuizVotes[]) =>{
     const totalVotes: QuizVotes[] = serializeVotes(votesResult);
@@ -52,7 +53,18 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
     let votesGet: QuizVotes[] = [];
     if (remainingQuestions.length === 0) {  
       try {
-        const questionsResult = await getQuestions(voted, range);
+        let {questionsResult, allVisited} = await getQuestions(voted, range);
+        console.log(questionsResult);
+        console.log(allVisited);
+        if(allVisited){
+          localStorage.setItem('voted', '');
+          setRange(0);
+          setVoted([]);
+        }
+        if(!questionsResult){
+          questionsResult = defaultQuestion;
+        }
+        //setIsAllVisited(allVisited);
         setRange( range + 9);
         questionsGet = serializeQuestions(questionsResult);
         const votesResult = await getVotes(currentAnswer);
@@ -81,6 +93,7 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
     setVoted(storedData ? JSON.parse(storedData) : []);
     const fetchData = async () =>{
       let {randomNumber,result} = await generateRandomQuestionId(storedDataAux);
+      console.log(result);
       setQuestions(result);
       if(result != questions){
         setQuestion(result[randomNumber].question__es);
