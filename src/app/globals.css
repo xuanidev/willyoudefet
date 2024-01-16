@@ -260,9 +260,13 @@ font-family: 'Poppins', sans-serif;
   }
   .bg-man__left {
     opacity: 0%;
+    min-height: 100svh;
+    height: fit-content;
   }
   .bg-man__right{
     opacity: 0%;
+    min-height: 100svh;
+    height: fit-content;
   }
   .question{
     font-size: 1.4rem;
