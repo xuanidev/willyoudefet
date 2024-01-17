@@ -34,6 +34,8 @@ export const getVotes = async ( id:number ) => {
     try {
       const { data: votesResult } = await supabase.from('votes').select().eq('id', id );
       if (votesResult) {
+        console.log(votesResult);
+        console.log(id);
         return votesResult;
       }
     } catch (error) {

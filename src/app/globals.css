@@ -84,6 +84,7 @@ button {
   border-bottom: 2px solid  #f4b66f;
   transition: all 0.4s ease-out;
   overflow: hidden;
+  box-sizing: border-box;
 }
 .font-poppins{
   font-family: 'Libre Bodoni', serif;
@@ -139,6 +140,7 @@ font-family: 'Poppins', sans-serif;
   border-left: 2px solid #f4b66f;
   border-right: 2px solid #f4b66f;
   border-top: 2px solid #f4b66f;  
+  box-sizing: border-box;
 }
 .bg-bar{
   top: 0;
@@ -219,7 +221,7 @@ font-family: 'Poppins', sans-serif;
   text-transform: uppercase;
   border: 1px solid #f4b66f;
   border-radius: 4px;
-  
+  box-sizing: border-box;
 }
 .resultQuiz__percentage{
   text-align: center;
@@ -281,12 +283,10 @@ font-family: 'Poppins', sans-serif;
   }
   .resultQuiz__tittle{
     font-size: 12px;
+    width: 20%;
   }
   .resultQuiz__votes{
     font-size: 13px;
-  }
-  .question{
-    width: auto;
   }
 
 }

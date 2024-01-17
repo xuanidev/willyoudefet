@@ -201,30 +201,33 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
               <p className='again__text'>OTRA PREGUNTA</p>
             </li>
           </ul>
-          <div className='result-content' style={{height: !selected ? 'auto' : '', gap: !selected ? '0px' : '16px'}}>
-              <ul className='results-box' style={{backgroundImage: `url(${granite.src})`, height: !selected ? '0px' : '100px', padding: !selected ? '0px' : '', border: !selected ? 'none' : ''}}>
-                {votes.map((answer, index) => (
-                  <li
-                    key={index}
-                    className='result-option relative'
-                      >          
-                      <div style={{height: `${answer}px`,backgroundColor: bgColors[index], border: `${isNaN(answer) || answer == 0 ? 'none' : ''}` }} className='bg-result'>
-                        <div className='bg-bar' style={{ opacity: '70%', filter: 'brightness(100%)',height: !selected ? '0px' : '24px'}}></div>
-                      </div>
-                  </li>
-                ))}
-              </ul>
-              <ul className='result__names' style={{height: !selected ? '0px' : '', padding: !selected ? '0px' : '', border: !selected ? 'none' : '', marginBottom: !selected ? '0px' : '' }}>
-                {votes.map((answer, index) => (
-                  <li
-                    key={index}
-                    className='resultQuiz__tittle'
-                    style={{display: !selected ? 'none' : '',backgroundColor: bgColors[index]}}
-                      >          
-                    {choices[index]}
-                  </li>
-                ))}
-              </ul>
+          <div className='result-content' style={{height: !selected ? '0px' : '200px', gap: !selected ? '0px' : '16px'}}>
+                  <div className='result-content__top' style={{backgroundImage: `url(${granite.src})`, padding: !selected ? '0px' : '', border: !selected ? 'none' : '', height: !selected ? '0px' : 'auto', opacity: !selected ? '0px' : 'auto' }}>
+                    <ul className='result__names' style={{height: !selected ? '0px' : '', padding: !selected ? '0px' : '', border: !selected ? 'none' : '', marginBottom: !selected ? '0px' : '' }}>
+                      {votes.map((answer, index) => (
+                        <li
+                          key={index}
+                          className='resultQuiz__tittle'
+                          style={{display: !selected ? 'none' : '',backgroundColor: bgColors[index]}}
+                            >          
+                          {choices[index]}
+                        </li>
+                      ))}
+                    </ul>
+                    <ul className='results-box' >
+                      {votes.map((answer, index) => (
+                        <li
+                          key={index}
+                          className='result-option relative'
+                            >          
+                            <div style={{height: `${answer}px`,backgroundColor: bgColors[index], border: `${isNaN(answer) || answer == 0 ? 'none' : ''}` }} className='bg-result'>
+                              <div className='bg-bar' style={{ opacity: '70%', filter: 'brightness(100%)',height: !selected ? '0px' : '24px'}}></div>
+                            </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
               <ul className='votes-box' style={{backgroundImage: `url(${granite.src})`, height: !selected ? '0px' : '', padding: !selected ? '0px' : '', border: !selected ? 'none' : '', marginBottom: !selected ? '0px' : '' }}>
                 {votes.map((vote, index) => (
                   <div className='totalQuiz' key={index}>

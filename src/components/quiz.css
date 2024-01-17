@@ -97,27 +97,32 @@ body {
   flex-direction: column;
   transition: all 0.6s ease-in-out;
 }
+.result-content__top{
+  border: 2px solid #f4b66f;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-radius: 6px;
+    transition: all 0.4s ease-in-out;
+}
 .results-box{
   display: flex;
   flex-direction: row;
   align-items: flex-end;
-  border: 2px solid #f4b66f;
   gap: 16px;
   padding-inline-start:0px;
   margin: 0px;
+  min-height: 70px;
   height: 100%;
-  border-radius: 6px;
   overflow: hidden;
   padding-left: 12px;
   padding-right: 16px;
-  padding-top: 48px;
   padding-bottom: 0px;
   transition: all 0.58s ease-in-out;
   position: relative;
   background-size: contain;
 }
 .result__names{
-  position: absolute;
   width: fill-available;
   display: flex;
   flex-direction: row;
@@ -125,7 +130,6 @@ body {
   padding-inline-start:0px;
   margin: 0px;
   margin-top: 12px;
-  margin-right: 12px;
   padding-left: 12px;
   padding-right: 16px;
   transition: all 0.55s ease-in-out;
@@ -234,6 +238,7 @@ width: 100%;
 .quiz-container ul .not-selected-answer {
   animation: hideAnimation 0.5s ease forwards;
   overflow: hidden;
+  display: none;
 }
 .quiz-container ul .again {
   animation: fullWidthAnimation 0.5s ease forwards;
@@ -268,7 +273,7 @@ width: 100%;
     width: 100%;
     display: block;
   }
-  80%{
+  30%{
     display: none;
     opacity: 0%;
     border: none;
@@ -276,7 +281,6 @@ width: 100%;
   100% {
     width: 0%;
     opacity: 0%;
-    display: none;
   }
 }
 @keyframes biggerAnimation {
@@ -329,6 +333,7 @@ width: 100%;
     }
   .results-box{
     gap: 12px;
+    height: 0px;
   }
   .quiz-container{
     width: 82%;
@@ -377,5 +382,21 @@ width: 100%;
   }
   .question-size{
     font-size: 1.3rem;
+  }
+}
+@media only screen and (min-width: 1570px) {
+  .quiz-container{
+    width: 810px;
+  }
+}
+
+@media only screen and (min-width: 1800px) {
+  .quiz-container{
+    width: 900px;
+  }
+}
+@media only screen and (min-width: 2100px) {
+  .quiz-container{
+    width: 1000px;
   }
 }
