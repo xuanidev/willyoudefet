@@ -22,7 +22,7 @@ const scrollToBottom = () => {
   }, 600);
 };
 
-const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
+const Quiz: React.FC<QuizProps> = ({ onSelect, loading, setLoading }) => {
   const [selected, setSelected] = useState(false);
   const [selectedAnswerIndex, setSelectedAnswerIndex] = useState(0)
   const [currentAnswer, setCurrentAnswer] = useState(1); 
@@ -53,6 +53,7 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
     let votesGet: QuizVotes[] = [];
     if (remainingQuestions.length === 0) {  
       try {
+        setLoading(true);
         let {questionsResult, allVisited} = await getQuestions(voted, range);
         console.log(questionsResult);
         console.log(allVisited);
@@ -71,6 +72,7 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
         if (questionsResult && votesResult) {
           createVotes(votesResult);
         }
+        setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -153,7 +155,7 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
   }
 
   return (
-    <div className="quiz" style={{marginTop: !selected ? '' : '-1%',marginBottom: '1%', gap: !selected ? '12px' : '' } }>
+    <div id='bottom' className="quiz" style={{marginTop: !selected ? '' : '-1%',paddingBottom: '2%' } }>
       <h2 className={`question font-poppins ${!selected ? 'question-size' : ''}`} style={{paddingBottom: !selected ? '12px' : '8px', paddingTop: !selected ? '12px' : '8px',paddingLeft:!selected ? '16px' : '12px', paddingRight:!selected ? '16px' : '12px' }}><span className='question-mark'>¿</span>{question}<span className='question-mark'>?</span></h2>
       <div className='quiz-container ' style={{paddingBottom: !selected ? '' : '12px', paddingTop: !selected ? '16px' : '16px', paddingLeft:!selected ? '16px' : '12px', paddingRight:!selected ? '16px' : '12px' }}>
         <div className='quiz-box' style={{gap: !selected ? '16px' : '12px'}}>
@@ -177,19 +179,18 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
           <ul className='choices-box'>
             {choices.map((answer, index) => (
               <li
-                onClick={() => onAnswerSelected(index)}
                 key={index}
                 className={`${
                     selectedAnswerIndex === index && selected ? 'selected-answer' : ''
-                  }  ${selected && selectedAnswerIndex !== index ? 'not-selected-answer' : ''}  choice-option `}
+                  }  ${selected && selectedAnswerIndex !== index ? 'not-selected-answer' : ''} choice-option ${loading ? 'notActive' : ''}`}
                   
                   style={{backgroundColor: bgColors[index], gridArea: selectedAnswerIndex === index && selected ? '1 / 1 / 2 / 4' : '' }}
                   >
                   <div style={{backgroundImage: `url(${granite.src})`,}} className={`${index % 2 === 0 ? '' : 'bg-granite-reverse'} bg-granite`}></div>
-                <button className={`${selected ? 'cursor-default' : ''} btnQuiz font-poppins`}>{answer}</button>
+                <button className={`${selected ? 'cursor-default' : ''} ${loading ? 'btnQuizNotActive' : 'btnQuiz'} font-poppins` }  disabled={loading} onClick={() => onAnswerSelected(index)}>{answer}</button>
               </li>
             ))} 
-            <li  className={`${selected ? 'grid_question-mark-full' : 'grid_question-mark'} again`} onClick={nextQuestion}>
+            <li  className={`${selected ? 'grid_question-mark-full' : 'grid_question-mark'} again ${loading ? 'notActive' : ''}`} onClick={nextQuestion}>
             <Image
                 src={replay}
                 width={70}
@@ -201,7 +202,7 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
               <p className='again__text'>OTRA PREGUNTA</p>
             </li>
           </ul>
-          <div className='result-content' style={{height: !selected ? '0px' : '200px', gap: !selected ? '0px' : '16px'}}>
+          <div className='result-content' style={{gap: !selected ? '0px' : '16px'}}>
                   <div className='result-content__top' style={{backgroundImage: `url(${granite.src})`, padding: !selected ? '0px' : '', border: !selected ? 'none' : '', height: !selected ? '0px' : 'auto', opacity: !selected ? '0px' : 'auto' }}>
                     <ul className='result__names' style={{height: !selected ? '0px' : '', padding: !selected ? '0px' : '', border: !selected ? 'none' : '', marginBottom: !selected ? '0px' : '' }}>
                       {votes.map((answer, index) => (
@@ -239,7 +240,7 @@ const Quiz: React.FC<QuizProps> = ({ onSelect }) => {
             </div>
         </div>
                 </div>
-                <div id='bottom'></div>
+                <div  style={{bottom: 0}}></div>
     </div>
   )
 }

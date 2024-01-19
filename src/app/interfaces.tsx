@@ -1,5 +1,7 @@
 export type QuizProps = {
     onSelect: (value: boolean) => void;
+    loading: boolean,
+    setLoading: (value: boolean) => void;
   };
   
   export type QuizQuestion = {

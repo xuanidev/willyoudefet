@@ -11,9 +11,18 @@ const myFont = localFont({ src: '../../public/fonts/ZTRavigsfen-Regular.otf' })
 
 export default function Home() {
   const [selected, setSelected] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const handleChildSelect = (value: boolean) => {
     setSelected(value);
+  };
+  const scrollToBottom = () => {
+    setTimeout(() => {
+      const element = document.getElementById('bottom');
+      if (element) {
+        element.scrollTop = element.scrollHeight;
+      }
+    }, 600);
   };
 
   return (
@@ -23,14 +32,14 @@ export default function Home() {
       <div className='bg-man__left ' style={{backgroundImage: `url(${left.src})`,}}></div>
       <div className='bg-man__right' style={{backgroundImage: `url(${rigth.src})`}}></div>
       <div className='bg-man' style={{backgroundImage: `url(${bg.src})`}}></div>
-      <div className="container">
-
-        <div className='subcontainer' style={{backgroundImage: `url(${granite.src})`, backgroundPosition: 'center', backgroundSize: 'auto',gap: !selected ? '16px' : '0px'}}>
-          <div className={`vs absolute ${!selected ? 'vs--marginTop' : '' }`} ><h1 className={`${myFont.className} `}>MAN VS</h1></div>
-          <Quiz onSelect={handleChildSelect}/>
-        </div>
+      <div className='bg-main' style={{backgroundImage: `url(${granite.src})`, backgroundPosition: 'center', backgroundSize: 'auto', position: 'fixed'}}></div>
+        <div className='subcontainer' style={{gap: !selected ? '16px' : '0px'}}>
+          <div className={`vs absolute ${!selected ? 'vs--marginTop' : ''}`} style={{marginTop: !selected ? '5%' : ''}} ><h1 className={`${myFont.className} `}>MAN VS</h1></div>
+          <Quiz onSelect={handleChildSelect} loading={loading} setLoading={setLoading}/>
+          <div id='bottom' style={{bottom: 0}}></div>
         {/*<div className={`bg-granite`} style={{backgroundImage: `url(${granite.src})`}}></div>*/}
       </div>
+      <div className="loader" style={{display: loading ? 'block' : 'none'}}></div>
     </main>
   </>
   )

@@ -11,12 +11,19 @@
   background-size: contain;
   background-position: center; 
   background-repeat: no-repeat;
-  z-index: 10;
+  z-index: 0;
   opacity: 0%;
   transition: all 0.5s ease-in-out;
 }
+.bg-main{
+  position: fixed;
+  height: 100svh;
+  width: 100%;
+  background-size: contain;
+  background-position: center; 
+}
 .bg-man__left{
-  position: absolute;
+  position: fixed;
   height: 100svh;
   width: 50%;
   background-image: url('../../public/bg.webp');
@@ -25,7 +32,7 @@
   transition: opacity 0.5s ease-in-out;
 }
 .bg-man__right{
-position: absolute;
+position: fixed;
 right: 0;
 height: 100svh;
 width: 50%;
@@ -40,11 +47,8 @@ transition: opacity 0.5s ease-in-out;
   display: flex;
   flex-direction: column;
   align-items: center;
-  position: absolute;
-  z-index: 10;
 }
 .subcontainer{
-  min-height: 100svh;
     width: 100%;
   display: flex;
   flex-direction: column;
@@ -76,6 +80,7 @@ button {
   text-align: center;
   background-color: #09031d;
   margin: 0px;
+  font-weight: 400;
   line-height: 140%;
   padding-left: 12px;
   padding-right: 12px;
@@ -97,8 +102,6 @@ font-family: 'Poppins', sans-serif;
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 4%;
-  padding-bottom: 16px;
 }
 
 .bg-granite{
@@ -125,6 +128,7 @@ font-family: 'Poppins', sans-serif;
   border-radius: 12px;
   opacity: 100%;
 }
+
 .bg-result{
   position: absolute;
   background-color: #f2d96b;
@@ -182,8 +186,21 @@ font-family: 'Poppins', sans-serif;
   height: 100%;
   width: 100%;
   z-index: 10;
-  font-size: 24px;
+  font-size: 28px;
   color: #f8e483;
+  transition: all 0.2s ease-in-out;
+  text-transform: uppercase;
+  padding-block: 0px;
+  padding-inline: 0px;
+  padding: 2px;
+}
+.btnQuizNotActive{
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: 10;
+  font-size: 24px;
+  color: #c7b768da;
   transition: all 0.2s ease-in-out;
   text-transform: uppercase;
   padding-block: 0px;
@@ -215,6 +232,7 @@ font-family: 'Poppins', sans-serif;
   height: 100%;
   width: 100%;
   font-size: 16px;
+  padding: 2px 0px;
   font-size: bold;
   color: #f8e483;
   transition: all 0.2s ease-in-out;
@@ -252,13 +270,34 @@ font-family: 'Poppins', sans-serif;
   margin-left: 6px;
   transform: rotate(0.5turn);
 }
+.loader {
+  width: 50px;
+  padding: 8px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #f8e483;
+  --_m: 
+    conic-gradient(#0000 10%,#000),
+    linear-gradient(#000 0 0) content-box;
+  -webkit-mask: var(--_m);
+          mask: var(--_m);
+  -webkit-mask-composite: source-out;
+          mask-composite: subtract;
+  animation: l3 1s infinite linear;
+  position: absolute;
+    z-index: 20;
+    left: calc(50% - 33px);
+    top: calc(50% - 33px);
+}
+@keyframes l3 {to{transform: rotate(1turn)}}
 
 @media only screen and (max-width: 768px) {
   .bg-man{
     background-size: contain;
     opacity: 100%;
     background-position: top;
-    margin-top: 15%;
+    padding-top: 15%;
+    box-sizing: border-box;
   }
   .bg-man__left {
     opacity: 0%;
@@ -272,6 +311,9 @@ font-family: 'Poppins', sans-serif;
   }
   .question{
     font-size: 1.4rem;
+  }
+  .quiz{  
+    padding-bottom: 16px;
   }
   .btnQuiz{
     font-size: 20px;

@@ -44,6 +44,7 @@ body {
 .separator{
   display: flex;
   align-items: center;
+  padding-left: 7px;
 }
 .separator p{
   font-size: 48px;
@@ -207,7 +208,11 @@ body {
   place-content: center;
   transition: all 0.2s ease-in-out;
 }
-
+.notActive{
+  border: 2px solid #f4b66f73;
+  opacity: 0.8;
+  pointer-events: none;
+}
 .quiz-container .results-box li {
   text-decoration: none;
   list-style: none;
@@ -221,9 +226,15 @@ justify-content: center;
 width: 100%;
   transition: all 0.4s ease-in-out;
 }
-.quiz-container .choices-box li:hover{
+.quiz-container .choices-box li:not(.notActive):hover {
   transform: scale(1.02);
-  box-shadow: 0px 1px 3px 1px rgb(135, 128, 81);
+  box-shadow: 0px 1px 3px 1px rgba(138, 129, 72, 0.8);
+  border: 2px solid #f4b66f;
+}
+
+.quiz-container .choices-box li:not(.notActive):hover .notActive {
+  transform: scale(1.0);
+  border: 2px solid white;
 }
 .quiz-container .choices-box li .again:hover{
   box-shadow: none;
@@ -369,7 +380,7 @@ width: 100%;
     padding-right: 0px;
   }
   .again__text{
-    font-size: 11px;
+    font-size: 10px;
     color: #f4b66f;
     text-align: center;
     font-weight: 500;
